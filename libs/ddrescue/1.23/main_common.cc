@@ -218,7 +218,7 @@ long initial_time()
 
 bool write_file_header( FILE * const f, const char * const filetype )
   {
-  const char * const PROGVERSION = "1.23";
+  //const char * const PROGVERSION = "1.23";
   static std::string timestamp;
 
   if( timestamp.empty() ) timestamp = get_timestamp( initial_time() );
