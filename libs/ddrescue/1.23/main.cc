@@ -15,10 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*
-    Exit status: 0 for a normal exit, 1 for environmental problems
-    (file not found, invalid flags, I/O errors, etc), 2 to indicate a
-    corrupt or invalid input file, 3 for an internal consistency error
-    (eg, bug) which caused ddrescue to panic.
+    Exit status:
+    0 for a normal exit,
+    1 for environmental problems (file not found, invalid flags, I/O errors, etc),
+    2 to indicate a corrupt or invalid input file,
+    3 for an internal consistency error (eg, bug) which caused ddrescue to panic.
 */
 
 #define _FILE_OFFSET_BITS 64
@@ -54,7 +55,6 @@
 #define O_DIRECT 0
 #endif
 
-
 namespace {
 
 const char * const Program_name = "GNU ddrescue";
@@ -62,8 +62,8 @@ const char * const program_name = "ddrescue";
 const char * invocation_name = 0;
 
 enum Mode { m_none, m_fill, m_generate };
-const mode_t outmode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
 
+const mode_t outmode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
 
 void show_help( const int cluster, const int hardbs )
   {
@@ -145,12 +145,12 @@ void show_help( const int cluster, const int hardbs )
                "General help using GNU software: http://www.gnu.org/gethelp\n" );
   }
 
-
 // Recognized formats: <rational_number>[unit]
 // Where the optional "unit" is one of 's', 'm', 'h' or 'd'.
 // Returns the number of seconds, or exits with 1 status if error.
 //
-Rational parse_rational_time( const char * const ptr, const bool comma = false,
+Rational parse_rational_time( const char * const ptr,
+                              const bool comma = false,
                               const int max_den = 100 )
   {
   Rational r;
@@ -177,12 +177,14 @@ Rational parse_rational_time( const char * const ptr, const bool comma = false,
   std::exit( 1 );
   }
 
-int parse_time_interval( const char * const ptr, const bool comma = false )
+int parse_time_interval( const char * const ptr,
+                         const bool comma = false )
   { return parse_rational_time( ptr, comma, 1 ).trunc(); }
 
-
-bool check_identical( const char * const iname, const char * const oname,
-                      const char * const mapname, const bool same_file )
+bool check_identical( const char * const iname,
+                      const char * const oname,
+                      const char * const mapname,
+                      const bool same_file )
   {
   struct stat istat, ostat, mapstat;
   bool iexists = false, oexists = false, mapexists = false;
@@ -215,10 +217,12 @@ bool check_identical( const char * const iname, const char * const oname,
   return false;
   }
 
-
-bool check_files( const char * const iname, const char * const oname,
-                  const char * const mapname, const Rb_options & rb_opts,
-                  const bool force, const bool generate,
+bool check_files( const char * const iname,
+                  const char * const oname,
+                  const char * const mapname,
+                  const Rb_options & rb_opts,
+                  const bool force,
+                  const bool generate,
                   const bool preallocate )
   {
   if( !iname || !oname )
@@ -260,12 +264,17 @@ bool check_files( const char * const iname, const char * const oname,
   return true;
   }
 
-
-int do_fill( const long long offset, Domain & domain,
-             const Fb_options & fb_opts, const Mb_options & mb_opts,
-             const char * const iname, const char * const oname,
-             const char * const mapname, const int cluster, const int hardbs,
-             const int o_direct_out, const bool synchronous )
+int do_fill( const long long offset,
+             Domain & domain,
+             const Fb_options & fb_opts,
+             const Mb_options & mb_opts,
+             const char * const iname,
+             const char * const oname,
+             const char * const mapname,
+             const int cluster,
+             const int hardbs,
+             const int o_direct_out,
+             const bool synchronous )
   {
   if( !mapname )
     { show_error( "Mapfile required in fill mode.", 0, true ); return 1; }
@@ -310,11 +319,14 @@ int do_fill( const long long offset, Domain & domain,
   return fillbook.do_fill( odes );
   }
 
-
-int do_generate( const long long offset, Domain & domain,
-                 const Mb_options & mb_opts, const char * const iname,
-                 const char * const oname, const char * const mapname,
-                 const int cluster, const int hardbs )
+int do_generate( const long long offset,
+                 Domain & domain,
+                 const Mb_options & mb_opts,
+                 const char * const iname,
+                 const char * const oname,
+                 const char * const mapname,
+                 const int cluster,
+                 const int hardbs )
   {
   if( !mapname )
     {
@@ -359,8 +371,8 @@ int do_generate( const long long offset, Domain & domain,
   return genbook.do_generate( odes );
   }
 
-
-void device_id_and_size( const long long size, const int fd,
+void device_id_and_size( const long long size,
+                         const int fd,
                          std::string & id_str )
   {
   struct stat st;
@@ -374,10 +386,12 @@ void device_id_and_size( const long long size, const int fd,
   id_str += buf;
   }
 
-
-void about_to_copy( const Rescuebook & rescuebook, const char * const iname,
-                    const char * const oname, const long long isize,
-                    const int ides, const bool ask )
+void about_to_copy( const Rescuebook & rescuebook,
+                    const char * const iname,
+                    const char * const oname,
+                    const long long isize,
+                    const int ides,
+                    const bool ask )
   {
   if( ask || verbosity >= 0 )
     std::printf( "%s %s\n", Program_name, PROGVERSION );
@@ -403,9 +417,10 @@ void about_to_copy( const Rescuebook & rescuebook, const char * const iname,
     }
   }
 
-
-bool user_agrees_ids( const Rescuebook & rescuebook, const char * const iname,
-                      const char * const oname, const long long isize,
+bool user_agrees_ids( const Rescuebook & rescuebook,
+                      const char * const iname,
+                      const char * const oname,
+                      const long long isize,
                       const int ides )
   {
   about_to_copy( rescuebook, iname, oname, isize, ides, true );
@@ -414,8 +429,8 @@ bool user_agrees_ids( const Rescuebook & rescuebook, const char * const iname,
   return ( std::tolower( std::fgetc( stdin ) ) == 'y' );
   }
 
-
-long long adjusted_isize( const int ides, const Domain * const test_domain )
+long long adjusted_isize( const int ides,
+                          const Domain * const test_domain )
   {
   long long isize = lseek( ides, 0, SEEK_END );
   if( isize >= 0 && test_domain )
@@ -426,14 +441,22 @@ long long adjusted_isize( const int ides, const Domain * const test_domain )
   return isize;
   }
 
-
-int do_rescue( const long long offset, Domain & domain,
-               const Domain * const test_domain, const Mb_options & mb_opts,
-               const Rb_options & rb_opts, const char * const iname,
-               const char * const oname, const char * const mapname,
-               const int cluster, const int hardbs, const int o_direct_out,
-               const int o_trunc, const bool ask, const bool preallocate,
-               const bool synchronous, const bool verify_input_size )
+int do_rescue( const long long offset,
+               Domain & domain,
+               const Domain * const test_domain,
+               const Mb_options & mb_opts,
+               const Rb_options & rb_opts,
+               const char * const iname,
+               const char * const oname,
+               const char * const mapname,
+               const int cluster,
+               const int hardbs,
+               const int o_direct_out,
+               const int o_trunc,
+               const bool ask,
+               const bool preallocate,
+               const bool synchronous,
+               const bool verify_input_size )
   {
   if( rb_opts.same_file && o_trunc )
     {
@@ -585,13 +608,12 @@ int do_rescue( const long long offset, Domain & domain,
 
 } // end namespace
 
-
 #include "main_common.cc"
-
 
 namespace {
 
-void parse_cpass( const char * p, Rb_options & rb_opts )
+void parse_cpass( const char * p,
+                  Rb_options & rb_opts )
   {
   rb_opts.cpass_bitset = 0;
   if( *p == '0' ) { if( p[1] == 0 ) return; }
@@ -616,7 +638,8 @@ void parse_cpass( const char * p, Rb_options & rb_opts )
   }
 
 
-void parse_mapfile_intervals( const char * const ptr, Mb_options & mb_opts )
+void parse_mapfile_intervals( const char * const ptr,
+                              Mb_options & mb_opts )
   {
   const char * const ptr2 = std::strchr( ptr, ',' );
 
@@ -641,7 +664,8 @@ void parse_mapfile_intervals( const char * const ptr, Mb_options & mb_opts )
   }
 
 
-void parse_pause_on_error( const char * const p, Rb_options & rb_opts )
+void parse_pause_on_error( const char * const p,
+                           Rb_options & rb_opts )
   {
   rb_opts.simulated_poe = ( p[0] == 's' );
   if( rb_opts.simulated_poe )
@@ -651,7 +675,8 @@ void parse_pause_on_error( const char * const p, Rb_options & rb_opts )
   }
 
 
-void parse_skipbs( const char * const ptr, Rb_options & rb_opts,
+void parse_skipbs( const char * const ptr,
+                   Rb_options & rb_opts,
                    const int hardbs )
   {
   const char * tail = ptr;
@@ -726,13 +751,19 @@ int main( const int argc, const char * const argv[] )
   bool preallocate = false;
   bool synchronous = false;
   bool verify_input_size = false;
+
   invocation_name = argv[0];
   command_line = argv[0];
+
   for( int i = 1; i < argc; ++i )
-    { command_line += ' '; command_line += argv[i]; }
+    {
+      command_line += ' ';
+      command_line += argv[i];
+    }
 
   enum { opt_ask = 256, opt_cpa, opt_ds, opt_eoe, opt_eve, opt_mi,
          opt_msr, opt_poe, opt_pop, opt_rat, opt_rea, opt_rs, opt_sf };
+
   const Arg_parser::Option options[] =
     {
     { 'a', "min-read-rate",        Arg_parser::yes },
@@ -798,17 +829,21 @@ int main( const int argc, const char * const argv[] )
     {  0 , 0,                      Arg_parser::no  } };
 
   const Arg_parser parser( argc, argv, options );
+
   if( parser.error().size() )				// bad option
-    { show_error( parser.error().c_str(), 0, true ); return 1; }
+    {
+      show_error( parser.error().c_str(), 0, true );
+      return 1;
+    }
 
   int argind = 0;
   for( ; argind < parser.arguments(); ++argind )
     {
-    const int code = parser.code( argind );
-    if( !code ) break;					// no more options
-    const std::string & sarg = parser.argument( argind );
-    const char * const arg = sarg.c_str();
-    switch( code )
+      const int code = parser.code( argind );
+      if( !code ) break;					// no more options
+      const std::string & sarg = parser.argument( argind );
+      const char * const arg = sarg.c_str();
+      switch( code )
       {
       case 'a': rb_opts.min_read_rate = getnum( arg, hardbs, 0 ); break;
       case 'A': rb_opts.try_again = true; break;
@@ -890,16 +925,20 @@ int main( const int argc, const char * const argv[] )
 
   const char *iname = 0, *oname = 0, *mapname = 0;
   if( argind < parser.arguments() ) iname = parser.argument( argind++ ).c_str();
+
   if( argind < parser.arguments() ) oname = parser.argument( argind++ ).c_str();
+
   if( argind < parser.arguments() ) mapname = parser.argument( argind++ ).c_str();
+
   if( argind < parser.arguments() )
-    { show_error( "Too many files.", 0, true ); return 1; }
+    {
+      show_error( "Too many files.", 0, true );
+      return 1;
+    }
 
   // end scan arguments
 
-  if( !check_files( iname, oname, mapname, rb_opts, force,
-                    program_mode == m_generate, preallocate ) )
-    return 1;
+  if( !check_files( iname, oname, mapname, rb_opts, force, program_mode == m_generate, preallocate )) return 1;
 
   Domain domain( ipos, max_size, domain_mapfile_name, loose );
 
@@ -907,36 +946,76 @@ int main( const int argc, const char * const argv[] )
     {
     case m_fill:
       if( ask )
-        { show_error( "Option '--ask' is incompatible with fill mode.", 0, true );
-          return 1; }
+        {
+          show_error( "Option '--ask' is incompatible with fill mode.", 0, true );
+          return 1;
+        }
+
       if( rb_opts.same_file )
-        { show_error( "Option '--same-file' is incompatible with fill mode.", 0, true );
-        return 1; }
-      if( rb_opts != Rb_options() || test_mode_mapfile_name ||
-          verify_input_size || preallocate || o_trunc )
+        {
+          show_error( "Option '--same-file' is incompatible with fill mode.", 0, true );
+          return 1;
+        }
+
+      if( rb_opts != Rb_options() || test_mode_mapfile_name || verify_input_size || preallocate || o_trunc )
         show_error( "warning: Options -aACdeEHIJKlMnOpPrRStTuxX are ignored in fill mode." );
-      return do_fill( opos - ipos, domain, fb_opts, mb_opts, iname, oname,
-                      mapname, cluster, hardbs, o_direct_out, synchronous );
+
+      return do_fill( opos - ipos,
+                      domain,
+                      fb_opts,
+                      mb_opts,
+                      iname,
+                      oname,
+                      mapname,
+                      cluster,
+                      hardbs,
+                      o_direct_out,
+                      synchronous );
+
     case m_generate:
       if( ask )
-        { show_error( "Option '--ask' is incompatible with generate mode.", 0, true );
-          return 1; }
-      if( fb_opts != Fb_options() || rb_opts != Rb_options() || synchronous ||
-          test_mode_mapfile_name || verify_input_size || preallocate ||
-          o_direct_out || o_trunc )
+        {
+          show_error( "Option '--ask' is incompatible with generate mode.", 0, true );
+          return 1;
+        }
+
+      if( fb_opts != Fb_options() || rb_opts != Rb_options() || synchronous || test_mode_mapfile_name || verify_input_size || preallocate || o_direct_out || o_trunc )
         show_error( "warning: Options -aACdDeEHIJKlMnOpPrRStTuwxXy are ignored in generate mode." );
-      return do_generate( opos - ipos, domain, mb_opts, iname, oname, mapname,
-                          cluster, hardbs );
+
+      return do_generate( opos - ipos,
+                          domain,
+                          mb_opts,
+                          iname,
+                          oname,
+                          mapname,
+                          cluster,
+                          hardbs );
+
     case m_none:
       {
       if( fb_opts != Fb_options() )
-        { show_error( "Option '-w' is incompatible with rescue mode.", 0, true );
-          return 1; }
+        {
+          show_error( "Option '-w' is incompatible with rescue mode.", 0, true );
+          return 1;
+        }
+
       const Domain test_domain( 0, -1, test_mode_mapfile_name, loose );
-      return do_rescue( opos - ipos, domain,
-                        test_mode_mapfile_name ? &test_domain : 0, mb_opts,
-                        rb_opts, iname, oname, mapname, cluster, hardbs,
-                        o_direct_out, o_trunc, ask, preallocate, synchronous,
+
+      return do_rescue( opos - ipos,
+                        domain,
+                        test_mode_mapfile_name ? &test_domain : 0,
+                        mb_opts,
+                        rb_opts,
+                        iname,
+                        oname,
+                        mapname,
+                        cluster,
+                        hardbs,
+                        o_direct_out,
+                        o_trunc,
+                        ask,
+                        preallocate,
+                        synchronous,
                         verify_input_size );
       }
     }

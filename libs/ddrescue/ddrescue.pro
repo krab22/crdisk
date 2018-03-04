@@ -1,7 +1,16 @@
-INCLUDEPATH += $$PWD/1.23
-DEPENDPATH  += $$PWD
+TARGET = ddrescue
+TEMPLATE = app
+CONFIG += console c++11
+CONFIG -= app_bundle
+CONFIG -= qt
 
-SOURCES += \#1.23/main.cc \
+DEPENDPATH  += $$PWD
+INCLUDEPATH += $$PWD/1.23
+
+MOC_DIR     += $$PWD/tmp
+OBJECTS_DIR += $$PWD/tmp
+
+SOURCES += 1.23/main.cc \
     1.23/arg_parser.cc \
     1.23/block.cc \
     1.23/ddrescuelog.cc \
@@ -23,4 +32,3 @@ HEADERS += 1.23/arg_parser.h \
     1.23/non_posix.h \
     1.23/rational.h \
     1.23/rescuebook.h
-

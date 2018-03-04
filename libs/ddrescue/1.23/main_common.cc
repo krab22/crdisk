@@ -22,14 +22,13 @@ namespace {
 const char * const program_year = "2018";
 std::string command_line;
 
-
 void show_version()
   {
-  std::printf( "GNU %s %s\n", program_name, PROGVERSION );
-  std::printf( "Copyright (C) %s Antonio Diaz Diaz.\n", program_year );
-  std::printf( "License GPLv2+: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>\n"
-               "This is free software: you are free to change and redistribute it.\n"
-               "There is NO WARRANTY, to the extent permitted by law.\n" );
+    std::printf( "GNU %s %s\n", program_name, PROGVERSION );
+    std::printf( "Copyright (C) %s Antonio Diaz Diaz.\n", program_year );
+    std::printf( "License GPLv2+: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>\n"
+                 "This is free software: you are free to change and redistribute it.\n"
+                 "There is NO WARRANTY, to the extent permitted by law.\n" );
   }
 
 
@@ -219,6 +218,7 @@ long initial_time()
 
 bool write_file_header( FILE * const f, const char * const filetype )
   {
+  const char * const PROGVERSION = "1.23";
   static std::string timestamp;
 
   if( timestamp.empty() ) timestamp = get_timestamp( initial_time() );
