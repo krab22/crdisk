@@ -15,10 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*
-    Exit status: 0 for a normal exit, 1 for environmental problems
-    (file not found, invalid flags, I/O errors, etc), 2 to indicate a
-    corrupt or invalid input file, 3 for an internal consistency error
-    (eg, bug) which caused ddrescuelog to panic.
+    Exit status:
+    0 for a normal exit,
+    1 for environmental problems (file not found, invalid flags, I/O errors, etc),
+    2 to indicate a corrupt or invalid input file,
+    3 for an internal consistency error (eg, bug) which caused ddrescuelog to panic.
 */
 
 #include <algorithm>
@@ -98,7 +99,8 @@ void show_help( const int hardbs )
 
 
 void parse_types( const std::string & arg,
-                  std::string & types1, std::string & types2 )
+                  std::string & types1,
+                  std::string & types2 )
   {
   std::string * p = &types1;
   bool error = false, comma_found = false;
@@ -128,7 +130,8 @@ void parse_types( const std::string & arg,
 
 
 void parse_2types( const std::string & arg,
-                   Sblock::Status & type1, Sblock::Status & type2 )
+                   Sblock::Status & type1,
+                   Sblock::Status & type2 )
   {
   if( arg.empty() ) return;
   if( arg.size() != 2 || arg[0] == arg[1] ||
@@ -142,7 +145,8 @@ void parse_2types( const std::string & arg,
   }
 
 
-void parse_type( const std::string & arg, Sblock::Status & complete_type )
+void parse_type( const std::string & arg,
+                 Sblock::Status & complete_type )
   {
   if( arg.empty() ) return;
   if( arg.size() != 1 || !Sblock::isstatus( arg[0] ) )
@@ -154,8 +158,10 @@ void parse_type( const std::string & arg, Sblock::Status & complete_type )
   }
 
 
-int do_logic_ops( Domain & domain, const char * const mapname,
-                  const char * const second_mapname, const Mode program_mode )
+int do_logic_ops( Domain & domain,
+                  const char * const mapname,
+                  const char * const second_mapname,
+                  const Mode program_mode )
   {
   Mapfile mapfile( mapname );
   if( !mapfile.read_mapfile() ) return not_readable( mapname );
@@ -209,7 +215,8 @@ int do_logic_ops( Domain & domain, const char * const mapname,
   }
 
 
-int annotate_mapfile( Domain & domain, const char * const mapname )
+int annotate_mapfile( Domain & domain,
+                      const char * const mapname )
   {
   Mapfile mapfile( mapname );
   if( !mapfile.read_mapfile() ) return not_readable( mapname );
@@ -223,8 +230,10 @@ int annotate_mapfile( Domain & domain, const char * const mapname )
   }
 
 
-int change_types( Domain & domain, const char * const mapname,
-                  const std::string & types1, const std::string & types2 )
+int change_types( Domain & domain,
+                  const char * const mapname,
+                  const std::string & types1,
+                  const std::string & types2 )
   {
   Mapfile mapfile( mapname );
   if( !mapfile.read_mapfile() ) return not_readable( mapname );
@@ -249,8 +258,10 @@ int change_types( Domain & domain, const char * const mapname,
   }
 
 
-int set_for_compare( Domain & domain, Mapfile & mapfile,
-                     const bool as_domain, const bool loose )
+int set_for_compare( Domain & domain,
+                     Mapfile & mapfile,
+                     const bool as_domain,
+                     const bool loose )
   {
   if( !mapfile.read_mapfile( ( as_domain && loose ) ? '?' : 0 ) )
     return not_readable( mapfile.filename() );
@@ -261,9 +272,11 @@ int set_for_compare( Domain & domain, Mapfile & mapfile,
   return -1;
   }
 
-int compare_mapfiles( Domain & domain, const char * const mapname,
+int compare_mapfiles( Domain & domain,
+                      const char * const mapname,
                       const char * const second_mapname,
-                      const bool as_domain, const bool loose )
+                      const bool as_domain,
+                      const bool loose )
   {
   Domain domain2( domain );
   Mapfile mapfile( mapname );
@@ -321,9 +334,12 @@ int complete_mapfile( const char * const mapname,
   }
 
 
-int create_mapfile( Domain & domain, const char * const mapname,
-                    const int hardbs, const Sblock::Status type1,
-                    const Sblock::Status type2, const bool force )
+int create_mapfile( Domain & domain,
+                    const char * const mapname,
+                    const int hardbs,
+                    const Sblock::Status type1,
+                    const Sblock::Status type2,
+                    const bool force )
   {
   if( domain.empty() ) return empty_domain();
   char buf[80];
@@ -364,7 +380,9 @@ int create_mapfile( Domain & domain, const char * const mapname,
   }
 
 
-int test_if_done( Domain & domain, const char * const mapname, const bool del )
+int test_if_done( Domain & domain,
+                  const char * const mapname,
+                  const bool del )
   {
   char buf[80];
   Mapfile mapfile( mapname );
@@ -404,8 +422,10 @@ int test_if_done( Domain & domain, const char * const mapname, const bool del )
   }
 
 
-int shift_blocks( const long long ipos, const long long opos,
-                  Domain & domain, const char * const mapname )
+int shift_blocks( const long long ipos,
+                  const long long opos,
+                  Domain & domain,
+                  const char * const mapname )
   {
   if( ipos != 0 && opos != 0 )
     { show_error( "Either '-i' or '-o' must be 0" ); return 1; }
@@ -424,8 +444,10 @@ int shift_blocks( const long long ipos, const long long opos,
   }
 
 
-int to_badblocks( const long long offset, Domain & domain,
-                  const char * const mapname, const int hardbs,
+int to_badblocks( const long long offset,
+                  Domain & domain,
+                  const char * const mapname,
+                  const int hardbs,
                   const std::string & blocktypes )
   {
   long long last_block = -1;
@@ -456,7 +478,8 @@ int to_badblocks( const long long offset, Domain & domain,
   }
 
 
-int do_show_status( Domain & domain, const char * const mapname,
+int do_show_status( Domain & domain,
+                    const char * const mapname,
                     const bool loose )
   {
   long long non_tried_size = 0, non_trimmed_size = 0;
@@ -526,9 +549,7 @@ int do_show_status( Domain & domain, const char * const mapname,
 
 } // end namespace
 
-
 #include "main_common.cc"
-
 
 int main( const int argc, const char * const argv[] )
   {
@@ -549,9 +570,13 @@ int main( const int argc, const char * const argv[] )
   invocation_name = argv[0];
   command_line = argv[0];
   for( int i = 1; i < argc; ++i )
-    { command_line += ' '; command_line += argv[i]; }
+    {
+      command_line += ' ';
+      command_line += argv[i];
+    }
 
   enum Optcode { opt_shi = 256 };
+
   const Arg_parser::Option options[] =
     {
     { 'a', "change-types",        Arg_parser::yes },
@@ -594,8 +619,12 @@ int main( const int argc, const char * const argv[] )
     {  0 , 0,                     Arg_parser::no  } };
 
   const Arg_parser parser( argc, argv, options );
+
   if( parser.error().size() )				// bad option
-    { show_error( parser.error().c_str(), 0, true ); return 1; }
+    {
+      show_error( parser.error().c_str(), 0, true );
+      return 1;
+    }
 
   int argind = 0;
   for( ; argind < parser.arguments(); ++argind )
@@ -647,8 +676,8 @@ int main( const int argc, const char * const argv[] )
 
   if( program_mode == m_none )
     {
-    show_error( "You must specify the operation to be performed.", 0, true );
-    return 1;
+      show_error( "You must specify the operation to be performed.", 0, true );
+      return 1;
     }
 
   if( opos < 0 ) opos = ipos;
@@ -656,16 +685,18 @@ int main( const int argc, const char * const argv[] )
   if( program_mode == m_status )
     {
     if( argind >= parser.arguments() )
-      { show_error( "At least one mapfile must be specified.", 0, true );
-        return 1; }
+      {
+        show_error( "At least one mapfile must be specified.", 0, true );
+        return 1;
+      }
     }
   else if( argind + 1 != parser.arguments() )
     {
-    if( argind < parser.arguments() )
-      show_error( "Too many files.", 0, true );
-    else
-      show_error( "A mapfile must be specified.", 0, true );
-    return 1;
+      if( argind < parser.arguments() )
+        show_error( "Too many files.", 0, true );
+      else
+        show_error( "A mapfile must be specified.", 0, true );
+      return 1;
     }
 
   int retval = 0;
@@ -676,27 +707,22 @@ int main( const int argc, const char * const argv[] )
 
     switch( program_mode )
       {
-      case m_none: internal_error( "invalid operation." ); break;
+      case m_none:     internal_error( "invalid operation." ); break;
       case m_and:
       case m_or:
-      case m_xor:
-        return do_logic_ops( domain, mapname, second_mapname, program_mode );
+      case m_xor:      return do_logic_ops( domain, mapname, second_mapname, program_mode );
       case m_annotate: return annotate_mapfile( domain, mapname );
-      case m_change: return change_types( domain, mapname, types1, types2 );
-      case m_compare: return compare_mapfiles( domain, mapname, second_mapname,
+      case m_change:   return change_types( domain, mapname, types1, types2 );
+      case m_compare:  return compare_mapfiles( domain, mapname, second_mapname,
                                                as_domain, loose );
       case m_complete: return complete_mapfile( mapname, complete_type );
-      case m_create: return create_mapfile( domain, mapname, hardbs,
-                                            type1, type2, force );
-      case m_delete: return test_if_done( domain, mapname, true );
-      case m_done_st: return test_if_done( domain, mapname, false );
-      case m_invert: return change_types( domain, mapname, "?*/-+", "++++-" );
-      case m_list:
-        return to_badblocks( opos - ipos, domain, mapname, hardbs, types1 );
-      case m_shift:
-        return shift_blocks( ipos, opos, domain, mapname );
-      case m_status:
-        retval = std::max( retval, do_show_status( domain, mapname, loose ) );
+      case m_create:   return create_mapfile( domain, mapname, hardbs, type1, type2, force );
+      case m_delete:   return test_if_done( domain, mapname, true );
+      case m_done_st:  return test_if_done( domain, mapname, false );
+      case m_invert:   return change_types( domain, mapname, "?*/-+", "++++-" );
+      case m_list:     return to_badblocks( opos - ipos, domain, mapname, hardbs, types1 );
+      case m_shift:    return shift_blocks( ipos, opos, domain, mapname );
+      case m_status:   retval = std::max( retval, do_show_status( domain, mapname, loose ) );
       }
     }
   return retval;

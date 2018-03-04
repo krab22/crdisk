@@ -17,6 +17,10 @@
 
 int verbosity = 0;
 
+#ifndef PROGVERSION
+#define PROGVERSION "1.23"
+#endif
+
 namespace {
 
 const char * const program_year = "2018";

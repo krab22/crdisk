@@ -23,6 +23,9 @@
 */
 
 #define _FILE_OFFSET_BITS 64
+#ifndef PROGVERSION
+#define PROGVERSION "1.23"
+#endif
 
 #include <algorithm>
 #include <cctype>
