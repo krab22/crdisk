@@ -58,6 +58,8 @@
 #define O_DIRECT 0
 #endif
 
+// http://www.k-max.name/linux/ddrescue-hdd-vosstanovlenie-and-examples/
+
 namespace {
 
 const char * const Program_name = "GNU ddrescue";
@@ -463,17 +465,17 @@ int do_rescue( const long long offset,
   {
   if( rb_opts.same_file && o_trunc )
     {
-    show_error( "Option '--same-file' is incompatible with '--truncate'.", 0, true );
+    show_error( "Опция '--same-file' не совместима с '--truncate'.", 0, true );
     return 1;
     }
 
   // use same flags as reopen_infile
   const int ides = open( iname, O_RDONLY | rb_opts.o_direct_in | O_BINARY );
   if( ides < 0 )
-    { show_error( "Can't open input file", errno ); return 1; }
+    { show_error( "Невозможно открыть входной файл", errno ); return 1; }
   const long long isize = adjusted_isize( ides, test_domain );
   if( isize < 0 )
-    { show_error( "Input file is not seekable." ); return 1; }
+    { show_error( "Входной файл не доступен для поиска." ); return 1; }
 
   Rescuebook rescuebook( offset, isize, domain, test_domain, mb_opts, rb_opts,
                          iname, mapname, cluster, hardbs, synchronous );
@@ -596,12 +598,12 @@ int do_rescue( const long long offset,
       std::printf( "Trim: %s         ", !rescuebook.notrim ? "yes" : "no " );
       std::printf( "Scrape: %s        ", !rescuebook.noscrape ? "yes" : "no " );
       if( rescuebook.max_retries >= 0 )
-          std::printf( "Max retry passes: %d", rescuebook.max_retries );
+          std::printf( "Максимально повторных проходов: %d", rescuebook.max_retries );
       std::fputc( '\n', stdout );
       if( rescuebook.complete_only )
-        { nl = true; std::fputs( "Complete only    ", stdout ); }
+        { nl = true; std::fputs( "Только для завершения    ", stdout ); }
       if( rescuebook.reverse )
-        { nl = true; std::fputs( "Reverse mode", stdout ); }
+        { nl = true; std::fputs( "Обратный режим", stdout ); }
       if( nl ) { nl = false; std::fputc( '\n', stdout ); }
       }
     std::fputc( '\n', stdout );
@@ -636,7 +638,7 @@ void parse_cpass( const char * p,
     if( *p == 0 ) return;
     if( *p == ',' ) ++p; else break;
     }
-  show_error( "Invalid pass or range of passes in option '--cpass'" );
+  show_error( "Недопустимый проход или диапазон проходов в опции '--cpass'" );
   std::exit( 1 );
   }
 
@@ -656,12 +658,12 @@ void parse_mapfile_intervals( const char * const ptr,
     mb_opts.mapfile_sync_interval = parse_time_interval( ptr2 + 1 );
   if( mb_opts.mapfile_sync_interval < 5 )
     {
-    show_error( "Minimum 'mapfile sync interval' is 5 seconds." );
+    show_error( "Минимальный 'mapfile sync interval' 5 секунд." );
     std::exit( 1 );
     }
   if( mb_opts.mapfile_save_interval > mb_opts.mapfile_sync_interval )
     {
-    show_error( "'mapfile save interval' is larger than 'mapfile sync interval'." );
+    show_error( "'mapfile save interval' больше чем 'mapfile sync interval'." );
     std::exit( 1 );
     }
   }
@@ -691,17 +693,17 @@ void parse_skipbs( const char * const ptr,
                                  rb_opts.max_max_skipbs, &tail );
   if( tail[0] )
     {
-    show_error( "Bad separator in argument of '--skip-size'", 0, true );
+    show_error( "Плохой разделитель в аргументе '--skip-size'", 0, true );
     std::exit( 1 );
     }
   if( rb_opts.skipbs > 0 && rb_opts.skipbs < Rb_options::min_skipbs )
     {
-    show_error( "Minimum initial skip size is 64KiB." );
+    show_error( "Минимальный начальный размер пропуска составляет 64KiB." );
     std::exit( 1 );
     }
   if( rb_opts.skipbs > rb_opts.max_skipbs )
     {
-    show_error( "'initial skip size' is larger than 'max skip size'." );
+    show_error( "'initial skip size' больше чем 'max skip size'." );
     std::exit( 1 );
     }
   }
@@ -710,7 +712,7 @@ void parse_skipbs( const char * const ptr,
 void check_o_direct()
   {
   if( O_DIRECT == 0 )
-    { show_error( "Direct disc access not available." ); std::exit( 1 ); }
+    { show_error( "Прямой доступ к диску недоступен." ); std::exit( 1 ); }
   }
 
 } // end namespace
@@ -722,13 +724,12 @@ bool Rescuebook::reopen_infile()
   // use same flags as do_rescue
   ides_ = open( iname_, O_RDONLY | o_direct_in | O_BINARY );
   if( ides_ < 0 )
-    { final_msg( "Can't reopen input file", errno ); return false; }
+    { final_msg( "Не удается открыть входной файл", errno ); return false; }
   const long long isize = lseek( ides_, 0, SEEK_END );
   if( isize < 0 )
-    { final_msg( "Input file has become not seekable", errno ); return false; }
+    { final_msg( "Входной файл не доступен для поиска", errno ); return false; }
   return true;
   }
-
 
 int main( const int argc, const char * const argv[] )
   {
@@ -843,80 +844,134 @@ int main( const int argc, const char * const argv[] )
   for( ; argind < parser.arguments(); ++argind )
     {
       const int code = parser.code( argind );
-      if( !code ) break;					// no more options
+      if( !code ) break;	// нет больше опций
+
       const std::string & sarg = parser.argument( argind );
       const char * const arg = sarg.c_str();
+
       switch( code )
       {
-      case 'a': rb_opts.min_read_rate = getnum( arg, hardbs, 0 ); break;
-      case 'A': rb_opts.try_again = true; break;
-      case 'b': hardbs = getnum( arg, 0, 1, max_hardbs ); break;
-      case 'B': format_num( 0, 0, -1 ); break;		// set binary prefixes
-      case 'c': cluster = getnum( arg, 0, 1, INT_MAX ); break;
-      case 'C': rb_opts.complete_only = true; break;
-      case 'd': rb_opts.o_direct_in = O_DIRECT; check_o_direct(); break;
-      case 'D': o_direct_out = O_DIRECT; check_o_direct(); break;
+      case 'a': rb_opts.min_read_rate = getnum( arg, hardbs, 0 );
+                break;
+      case 'A': rb_opts.try_again = true;
+                break;
+      case 'b': hardbs = getnum( arg, 0, 1, max_hardbs );
+                break;
+      case 'B': format_num( 0, 0, -1 ); 		// set binary prefixes
+                break;
+      case 'c': cluster = getnum( arg, 0, 1, INT_MAX );
+                break;
+      case 'C': rb_opts.complete_only = true;
+                break;
+      case 'd': rb_opts.o_direct_in = O_DIRECT;
+                check_o_direct();
+                break;
+      case 'D': o_direct_out = O_DIRECT;
+                check_o_direct();
+                break;
       case 'e': rb_opts.new_bad_areas_only = ( arg[0] == '+' );
-                rb_opts.max_bad_areas = getnum( arg, 0, 0, LONG_MAX ); break;
-      case 'E': rb_opts.max_error_rate = getnum( arg, hardbs, 0 ); break;
-      case 'f': force = true; break;
-      case 'F': set_mode( program_mode, m_fill ); fb_opts.filltypes = sarg;
-                fb_opts.write_location_data =
-                  check_types( fb_opts.filltypes, "fill-mode", true ); break;
-      case 'G': set_mode( program_mode, m_generate ); break;
+                rb_opts.max_bad_areas = getnum( arg, 0, 0, LONG_MAX );
+                break;
+      case 'E': rb_opts.max_error_rate = getnum( arg, hardbs, 0 );
+                break;
+      case 'f': force = true;
+                break;
+      case 'F': set_mode( program_mode, m_fill );
+                fb_opts.filltypes = sarg;
+                fb_opts.write_location_data = check_types( fb_opts.filltypes, "fill-mode", true );
+                break;
+      case 'G': set_mode( program_mode, m_generate );
+                break;
       case 'h': show_help( cluster_bytes / default_hardbs, default_hardbs );
                 return 0;
-      case 'H': set_name( &test_mode_mapfile_name, arg, code ); break;
-      case 'i': ipos = getnum( arg, hardbs, 0 ); break;
-      case 'I': verify_input_size = true; break;
-      case 'J': rb_opts.verify_on_error = true; break;
-      case 'K': parse_skipbs( arg, rb_opts, hardbs ); break;
-      case 'L': loose = true; break;
-      case 'm': set_name( &domain_mapfile_name, arg, code ); break;
-      case 'M': rb_opts.retrim = true; break;
-      case 'n': rb_opts.noscrape = true; break;
-      case 'N': rb_opts.notrim = true; break;
-      case 'o': opos = getnum( arg, hardbs, 0 ); break;
-      case 'O': rb_opts.reopen_on_error = true; break;
-      case 'p': preallocate = true; break;
+      case 'H': set_name( &test_mode_mapfile_name, arg, code );
+                break;
+      case 'i': ipos = getnum( arg, hardbs, 0 );
+                break;
+      case 'I': verify_input_size = true;
+                break;
+      case 'J': rb_opts.verify_on_error = true;
+                break;
+      case 'K': parse_skipbs( arg, rb_opts, hardbs );
+                break;
+      case 'L': loose = true;
+                break;
+      case 'm': set_name( &domain_mapfile_name, arg, code );
+                break;
+      case 'M': rb_opts.retrim = true;
+                break;
+      case 'n': rb_opts.noscrape = true;
+                break;
+      case 'N': rb_opts.notrim = true;
+                break;
+      case 'o': opos = getnum( arg, hardbs, 0 );
+                break;
+      case 'O': rb_opts.reopen_on_error = true;
+                break;
+      case 'p': preallocate = true;
+                break;
       case 'P': rb_opts.preview_lines = arg[0] ? getnum( arg, 0, 1, 32 ) : 3;
                 break;
-      case 'q': verbosity = -1; break;
-      case 'r': rb_opts.max_retries = getnum( arg, 0, -1, INT_MAX / 2 ); break;
-      case 'R': rb_opts.reverse = true; break;
-      case 's': max_size = getnum( arg, hardbs, -1 ); break;
-      case 'S': rb_opts.sparse = true; break;
-      case 't': o_trunc = O_TRUNC; break;
-      case 'T': rb_opts.timeout = parse_time_interval( arg ); break;
-      case 'u': rb_opts.unidirectional = true; break;
-      case 'v': if( verbosity < 4 ) ++verbosity; break;
-      case 'V': show_version(); return 0;
-      case 'w': fb_opts.ignore_write_errors = true; break;
-      case 'x': rb_opts.min_outfile_size = getnum( arg, hardbs, 1 ); break;
-      case 'X': rb_opts.max_read_errors = getnum( arg, 0, 0, LONG_MAX ); break;
-      case 'y': synchronous = true; break;
-      case 'Z': rb_opts.max_read_rate = getnum( arg, hardbs, 1 ); break;
-      case opt_ask: ask = true; break;
-      case opt_cpa: parse_cpass( arg, rb_opts ); break;
-      case opt_ds:  rb_opts.delay_slow = parse_time_interval( arg ); break;
-      case opt_eoe: rb_opts.max_read_errors = 0; break;
+      case 'q': verbosity = -1;
+                break;
+      case 'r': rb_opts.max_retries = getnum( arg, 0, -1, INT_MAX / 2 );
+                break;
+      case 'R': rb_opts.reverse = true;
+                break;
+      case 's': max_size = getnum( arg, hardbs, -1 );
+                break;
+      case 'S': rb_opts.sparse = true;
+                break;
+      case 't': o_trunc = O_TRUNC;
+                break;
+      case 'T': rb_opts.timeout = parse_time_interval( arg );
+                break;
+      case 'u': rb_opts.unidirectional = true;
+                break;
+      case 'v': if( verbosity < 4 ) ++verbosity;
+                break;
+      case 'V': show_version();
+                return 0;
+      case 'w': fb_opts.ignore_write_errors = true;
+                break;
+      case 'x': rb_opts.min_outfile_size = getnum( arg, hardbs, 1 );
+                break;
+      case 'X': rb_opts.max_read_errors = getnum( arg, 0, 0, LONG_MAX );
+                break;
+      case 'y': synchronous = true;
+                break;
+      case 'Z': rb_opts.max_read_rate = getnum( arg, hardbs, 1 );
+                break;
+      case opt_ask: ask = true;
+                    break;
+      case opt_cpa: parse_cpass( arg, rb_opts );
+                    break;
+      case opt_ds:  rb_opts.delay_slow = parse_time_interval( arg );
+                    break;
+      case opt_eoe: rb_opts.max_read_errors = 0;
+                    break;
       case opt_eve: if( event_logger.set_filename( arg ) ) break;
-            show_error( "Events logfile exists and is not a regular file." );
-            return 1;
-      case opt_mi:  parse_mapfile_intervals( arg, mb_opts ); break;
+                    show_error( "Файл журнала событий существует и не является обычным файлом." );
+                    return 1;
+      case opt_mi:  parse_mapfile_intervals( arg, mb_opts );
+                    break;
       case opt_msr: rb_opts.max_slow_reads = getnum( arg, 0, 0, LONG_MAX );
                     break;
-      case opt_poe: parse_pause_on_error( arg, rb_opts ); break;
-      case opt_pop: rb_opts.pause_on_pass = parse_time_interval( arg ); break;
+      case opt_poe: parse_pause_on_error( arg, rb_opts );
+                    break;
+      case opt_pop: rb_opts.pause_on_pass = parse_time_interval( arg );
+                    break;
       case opt_rat: if( rate_logger.set_filename( arg ) ) break;
-            show_error( "Rates logfile exists and is not a regular file." );
-            return 1;
+                    show_error( "Файл журнала ставок существует и не является обычным файлом." );
+                    return 1;
       case opt_rea: if( read_logger.set_filename( arg ) ) break;
-            show_error( "Reads logfile exists and is not a regular file." );
-            return 1;
-      case opt_rs:  rb_opts.reset_slow = true; break;
-      case opt_sf:  rb_opts.same_file = true; break;
-      default : internal_error( "uncaught option." );
+                    show_error( "Чтение файла журнала существует и не является обычным файлом." );
+                    return 1;
+      case opt_rs:  rb_opts.reset_slow = true;
+                    break;
+      case opt_sf:  rb_opts.same_file = true;
+                    break;
+      default : internal_error( "неперехваченный вариант." );
       }
     } // end process options
 
@@ -935,7 +990,7 @@ int main( const int argc, const char * const argv[] )
 
   if( argind < parser.arguments() )
     {
-      show_error( "Too many files.", 0, true );
+      show_error( "Слишком много файлов.", 0, true );
       return 1;
     }
 
@@ -950,18 +1005,18 @@ int main( const int argc, const char * const argv[] )
     case m_fill:
       if( ask )
         {
-          show_error( "Option '--ask' is incompatible with fill mode.", 0, true );
+          show_error( "Опция '--ask' несовместима с режимом заполнения", 0, true );
           return 1;
         }
 
       if( rb_opts.same_file )
         {
-          show_error( "Option '--same-file' is incompatible with fill mode.", 0, true );
+          show_error( "Опция --same-file несовместима с режимом заполнения", 0, true );
           return 1;
         }
 
       if( rb_opts != Rb_options() || test_mode_mapfile_name || verify_input_size || preallocate || o_trunc )
-        show_error( "warning: Options -aACdeEHIJKlMnOpPrRStTuxX are ignored in fill mode." );
+        show_error( "предупреждение: Опции -aACdeEHIJKlMnOpPrRStTuxX игнорируются в режиме заполнения." );
 
       return do_fill( opos - ipos,
                       domain,
@@ -978,12 +1033,19 @@ int main( const int argc, const char * const argv[] )
     case m_generate:
       if( ask )
         {
-          show_error( "Option '--ask' is incompatible with generate mode.", 0, true );
+          show_error( "Опция --ask  несовместима с режимом генерации", 0, true );
           return 1;
         }
 
-      if( fb_opts != Fb_options() || rb_opts != Rb_options() || synchronous || test_mode_mapfile_name || verify_input_size || preallocate || o_direct_out || o_trunc )
-        show_error( "warning: Options -aACdDeEHIJKlMnOpPrRStTuwxXy are ignored in generate mode." );
+      if( fb_opts != Fb_options() ||
+          rb_opts != Rb_options() ||
+          synchronous ||
+          test_mode_mapfile_name ||
+          verify_input_size ||
+          preallocate ||
+          o_direct_out ||
+          o_trunc )
+        show_error( "предупреждение: Опции -aACdDeEHIJKlMnOpPrRStTuwxXy игнорируются в режиме генерации" );
 
       return do_generate( opos - ipos,
                           domain,
@@ -998,7 +1060,7 @@ int main( const int argc, const char * const argv[] )
       {
       if( fb_opts != Fb_options() )
         {
-          show_error( "Option '-w' is incompatible with rescue mode.", 0, true );
+          show_error( "Опция -w несовместима с данным режимом.", 0, true );
           return 1;
         }
 
